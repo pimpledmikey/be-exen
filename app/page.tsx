@@ -1,49 +1,23 @@
 import {
   ArrowRight,
   ArrowUpRight,
-  Building2,
-  Check,
-  Factory,
-  Gauge,
-  House,
-  Leaf,
   Menu,
+  Mail,
+  MapPin,
+  Camera,
+  UsersRound,
   Phone,
-  ShieldCheck,
   Sparkles,
   Sun,
   Zap,
 } from "lucide-react";
 
+import { AboutDetails, ServicesMarquee, Solutions } from "./site-sections";
+import { Financing } from "./financing";
+import { Allies } from "./allies";
+
 const whatsappUrl =
   "https://wa.me/524421040693?text=Hola%20BE%20Excellent%20Energy%2C%20quiero%20cotizar%20un%20proyecto%20energ%C3%A9tico.";
-
-const solutions = [
-  {
-    icon: House,
-    number: "01",
-    title: "Residencial",
-    description:
-      "Convierte el sol en ahorro para tu hogar con un sistema diseñado alrededor de tu consumo real.",
-    detail: "Sistemas interconectados y aislados",
-  },
-  {
-    icon: Building2,
-    number: "02",
-    title: "Comercial",
-    description:
-      "Reduce costos operativos y mejora la eficiencia energética de tu negocio con una solución escalable.",
-    detail: "Diseño, instalación y monitoreo",
-  },
-  {
-    icon: Factory,
-    number: "03",
-    title: "Industrial",
-    description:
-      "Ingeniería para proyectos de mayor demanda, con acompañamiento técnico y gestión de principio a fin.",
-    detail: "Proyectos llave en mano",
-  },
-];
 
 const process = [
   {
@@ -72,27 +46,6 @@ const process = [
   },
 ];
 
-const benefits = [
-  {
-    icon: Gauge,
-    title: "Ahorro energético",
-    description:
-      "Genera parte de la energía que consumes y reduce el impacto de futuros incrementos.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Inversión respaldada",
-    description:
-      "Ingeniería, instalación y acompañamiento en un mismo equipo especializado.",
-  },
-  {
-    icon: Leaf,
-    title: "Menos emisiones",
-    description:
-      "Avanza hacia tus objetivos ambientales con energía limpia producida en sitio.",
-  },
-];
-
 function BrandLogo({ className = "" }: { className?: string }) {
   return (
     <img
@@ -113,10 +66,11 @@ export default function Home() {
           </a>
 
           <nav className="desktop-nav" aria-label="Navegación principal">
+            <a href="#nosotros">Quiénes somos</a>
             <a href="#soluciones">Soluciones</a>
-            <a href="#proceso">Cómo trabajamos</a>
-            <a href="#nosotros">Nosotros</a>
+            <a href="#proceso">Cómo lo hacemos</a>
             <a href="#contacto">Contacto</a>
+            <a href="#ubicacion">Ubicación</a>
           </nav>
 
           <a
@@ -134,10 +88,12 @@ export default function Home() {
               <Menu size={24} aria-hidden="true" />
             </summary>
             <nav aria-label="Navegación móvil">
+              <a href="#nosotros">Quiénes somos</a>
               <a href="#soluciones">Soluciones</a>
-              <a href="#proceso">Cómo trabajamos</a>
-              <a href="#nosotros">Nosotros</a>
+              <a href="#proceso">Cómo lo hacemos</a>
+              <a href="#financiamiento">Financiamiento FIDE</a>
               <a href="#contacto">Contacto</a>
+              <a href="#ubicacion">Ubicación</a>
               <a href={whatsappUrl} target="_blank" rel="noreferrer">
                 Cotizar ahora
               </a>
@@ -184,11 +140,6 @@ export default function Home() {
               </a>
             </div>
 
-            <div className="trust-row" aria-label="Ventajas del servicio">
-              <span><Check size={15} aria-hidden="true" /> Diseño a la medida</span>
-              <span><Check size={15} aria-hidden="true" /> Gestión ante CFE</span>
-              <span><Check size={15} aria-hidden="true" /> Monitoreo</span>
-            </div>
           </div>
 
           <div className="hero-visual">
@@ -209,7 +160,7 @@ export default function Home() {
                 <span className="smart-icon">
                   <Zap size={18} fill="currentColor" aria-hidden="true" />
                 </span>
-                <span className="status-pill"><i /> Sistema activo</span>
+                <span className="status-pill">Energía a tu medida</span>
               </div>
               <p>Smart Solar</p>
               <h2>Tu energía, bajo control.</h2>
@@ -231,13 +182,28 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="hero-marquee" aria-label="Servicios principales">
-          <div>
-            <span>Paneles solares</span><i />
-            <span>Consultoría energética</span><i />
-            <span>Proyectos llave en mano</span><i />
-            <span>Mercado Eléctrico Mayorista</span><i />
+        <ServicesMarquee />
+      </section>
+
+      <section className="section story-section" id="nosotros">
+        <div className="container">
+          <div className="story-grid">
+            <div className="story-image">
+              <img src="/images/solar-residencial.webp" alt="Casa equipada con paneles solares" loading="lazy" width="1024" height="576" />
+              <div className="story-badge">
+                <Sun size={20} aria-hidden="true" />
+                <span>Energía para hoy.<strong>Visión para mañana.</strong></span>
+              </div>
+            </div>
+            <div className="story-copy">
+              <p className="section-kicker">Quiénes somos · BE Excellent Energy</p>
+              <h2>Socios estratégicos,<br />no proveedores.</h2>
+              <p className="story-lead">Be Excellent Energy es una empresa mexicana con más de 10 años de experiencia diseñando e implementando soluciones energéticas renovables que transforman la energía en una ventaja competitiva.</p>
+              <p className="story-lead story-followup">Te acompañamos desde la primera conversación hasta la puesta en marcha, con ingeniería y atención cercana en cada etapa.</p>
+              <a className="text-link" href="#soluciones">Descubre qué podemos hacer por ti <ArrowRight size={18} aria-hidden="true" /></a>
+            </div>
           </div>
+          <AboutDetails><Allies /></AboutDetails>
         </div>
       </section>
 
@@ -245,7 +211,7 @@ export default function Home() {
         <div className="container">
           <div className="section-heading split-heading">
             <div>
-              <p className="section-kicker">Soluciones</p>
+              <p className="section-kicker">Qué te ofrecemos</p>
               <h2>Una solución para cada forma de consumir energía.</h2>
             </div>
             <p>
@@ -254,29 +220,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="solution-grid">
-            {solutions.map((solution) => {
-              const Icon = solution.icon;
-              return (
-                <article className="solution-card" key={solution.title}>
-                  <div className="solution-card-top">
-                    <span className="solution-icon">
-                      <Icon size={22} strokeWidth={1.7} aria-hidden="true" />
-                    </span>
-                    <span className="solution-number">{solution.number}</span>
-                  </div>
-                  <div>
-                    <h3>{solution.title}</h3>
-                    <p>{solution.description}</p>
-                  </div>
-                  <div className="solution-detail">
-                    {solution.detail}
-                    <ArrowUpRight size={17} aria-hidden="true" />
-                  </div>
-                </article>
-              );
-            })}
-          </div>
+          <Solutions />
 
           <div className="consulting-banner">
             <div className="consulting-copy">
@@ -306,7 +250,7 @@ export default function Home() {
       <section className="section process-section" id="proceso">
         <div className="container">
           <div className="section-heading process-heading">
-            <p className="section-kicker">Proyecto llave en mano</p>
+            <p className="section-kicker">Cómo lo hacemos · Proyecto llave en mano</p>
             <h2>De tu recibo de luz a un sistema produciendo energía.</h2>
           </div>
 
@@ -325,45 +269,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section story-section" id="nosotros">
-        <div className="container story-grid">
-          <div className="story-image">
-            <img
-              src="/images/solar-residencial.webp"
-              alt="Casa equipada con paneles solares"
-              loading="lazy"
-            />
-            <div className="story-badge">
-              <Sun size={20} aria-hidden="true" />
-              <span>Energía para hoy.<strong>Visión para mañana.</strong></span>
-            </div>
-          </div>
-
-          <div className="story-copy">
-            <p className="section-kicker">BE Excellent Energy</p>
-            <h2>La tranquilidad de tener un equipo que entiende tu energía.</h2>
-            <p className="story-lead">
-              Ponemos ingeniería, experiencia y atención cercana en cada
-              proyecto. Nuestra meta es construir una solución confiable que
-              haga sentido para ti y siga generando valor con el tiempo.
-            </p>
-            <div className="benefit-list">
-              {benefits.map((benefit) => {
-                const Icon = benefit.icon;
-                return (
-                  <div className="benefit-item" key={benefit.title}>
-                    <span><Icon size={21} strokeWidth={1.8} aria-hidden="true" /></span>
-                    <div>
-                      <h3>{benefit.title}</h3>
-                      <p>{benefit.description}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
+      <Financing />
 
       <section className="cta-section" id="contacto">
         <div className="container">
@@ -392,6 +298,23 @@ export default function Home() {
               </a>
             </div>
           </div>
+          <div className="contact-links">
+            <a href="mailto:hola@be-exen.com"><Mail aria-hidden="true" size={22} /><span><small>Escríbenos</small>hola@be-exen.com</span></a>
+            <a href="https://www.instagram.com/panelesbeexen/" target="_blank" rel="noopener noreferrer"><Camera aria-hidden="true" size={22} /><span><small>Instagram</small>@panelesbeexen</span></a>
+            <a href="https://www.facebook.com/share/1Z14KDDHeG/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer"><UsersRound aria-hidden="true" size={22} /><span><small>Facebook</small>Paneles Solares</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section className="section location-section" id="ubicacion">
+        <div className="container location-grid">
+          <div className="location-copy">
+            <p className="section-kicker">Ubicación</p>
+            <h2>Conversemos sobre tu energía.</h2>
+            <address><MapPin size={22} aria-hidden="true" /><span>Av. del Roble 3, Álamos 2a Sección,<br />76160 Santiago de Querétaro, Qro.</span></address>
+            <a className="button button-primary" href="https://www.google.com/maps/search/?api=1&query=Av.+del+Roble+3+Alamos+2a+Seccion+76160+Santiago+de+Queretaro" target="_blank" rel="noopener noreferrer">Abrir en Google Maps <ArrowUpRight size={18} aria-hidden="true" /></a>
+          </div>
+          <iframe title="Mapa de BE Excellent Energy en Av. del Roble 3, Querétaro" src="https://www.google.com/maps?q=Av.+del+Roble+3+Alamos+2a+Seccion+76160+Santiago+de+Queretaro&output=embed" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
         </div>
       </section>
 
@@ -406,14 +329,16 @@ export default function Home() {
           </div>
           <div className="footer-column">
             <strong>Navegación</strong>
+            <a href="#nosotros">Quiénes somos</a>
             <a href="#soluciones">Soluciones</a>
-            <a href="#proceso">Cómo trabajamos</a>
-            <a href="#nosotros">Nosotros</a>
+            <a href="#proceso">Cómo lo hacemos</a>
+            <a href="#financiamiento">Financiamiento FIDE</a>
           </div>
           <div className="footer-column">
             <strong>Contacto</strong>
             <a href="tel:+524421040693">442 104 0693</a>
-            <p>Querétaro, México</p>
+            <a href="mailto:hola@be-exen.com">hola@be-exen.com</a>
+            <a href="#ubicacion">Querétaro, México</a>
           </div>
         </div>
         <div className="container footer-bottom">

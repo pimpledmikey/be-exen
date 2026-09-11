@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "BE Excellent Energy | Soluciones energéticas",
   description:
-    "Diseño e instalación de paneles solares, proyectos llave en mano y consultoría energética para hogares, comercios e industria en México.",
+    "Soluciones solares residenciales, comerciales, industriales y sistemas híbridos. Ingeniería, instalación, consultoría energética y asesoría sobre financiamiento FIDE.",
   icons: {
     icon: "/brand/be-exen-logo.svg",
     shortcut: "/brand/be-exen-logo.svg",
