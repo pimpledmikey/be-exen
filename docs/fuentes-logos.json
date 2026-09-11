@@ -1,0 +1,88 @@
+{
+  "verified_at": "2026-09-10",
+  "assets": [
+    {
+      "name": "COPARMEX Querétaro",
+      "file": "coparmex-queretaro.png",
+      "source_page_url": "https://coparmexqro.org/",
+      "source_image_url": "https://coparmexqro.org/assets/images/logos/coparmex.png",
+      "source_type": "official organization",
+      "verification": "Downloaded source bytes exactly match local file.",
+      "sha256": "5d26f82eaba9b0431c164711537b6a54bdee30d6a591e10dad4b578220cc2d75",
+      "size_px": [
+        3313,
+        662
+      ]
+    },
+    {
+      "name": "SunPower from Maxeon Solar Technologies",
+      "file": "sunpower-maxeon.jpg",
+      "source_page_url": "https://www.bespaarpartner.nl/merken/sunpower/",
+      "source_image_url": "https://www.bespaarpartner.nl/assets/uploads/2022/11/Sunpower-Logo.jpg",
+      "source_type": "solar installer/distributor",
+      "verification": "Downloaded source bytes exactly match local file. Visually verified exact tagline FROM MAXEON SOLAR TECHNOLOGIES.",
+      "display_note": "Square 900x900 white canvas with substantial vertical margins; use CSS sizing/crop as needed, source file left unchanged.",
+      "sha256": "6fc38e5f75cda4e9dbbacb0b4d4967679f2d5b4cf60a736b6f0ead58ff6fb7c6",
+      "size_px": [
+        900,
+        900
+      ]
+    },
+    {
+      "name": "LONGi Solar",
+      "file": "longi-solar.jpg",
+      "source_page_url": "https://www.prnewswire.co.uk/news-releases/longi-joined-climate-week-nyc-2020-in-global-efforts-to-achieve-a-net-zero-world-886358129.html",
+      "source_image_url": "https://mma.prnewswire.com/media/781516/LONGi_Solar_Logo.jpg",
+      "source_type": "official company press release syndicated by PRNewswire",
+      "verification": "Downloaded source bytes exactly match local file. Red LONGi wordmark on white, visually inspected.",
+      "display_note": "Chosen red LONGi identity; the word SOLAR is not present in this logo.",
+      "sha256": "ccdd35af19cdeb31a5117783f669f57f6f4a9e386ca3494aba38775998f2d125",
+      "size_px": [
+        400,
+        230
+      ]
+    },
+    {
+      "name": "CFE",
+      "file": "cfe.png",
+      "source_page_url": "https://be-exen.com/",
+      "source_image_url": "https://be-exen.com/wp-content/uploads/2022/12/Comision_Federal_de_Electricidad_logo_.svg-1024x372.png",
+      "source_type": "Sitio original del usuario"
+    },
+    {
+      "name": "FIDE",
+      "file": "fide.png",
+      "source_page_url": "https://be-exen.com/",
+      "source_image_url": "https://be-exen.com/wp-content/uploads/2022/12/logofide.png",
+      "source_type": "Sitio original del usuario"
+    },
+    {
+      "name": "CIBanco",
+      "file": "cibanco.png",
+      "source_page_url": "https://be-exen.com/",
+      "source_image_url": "https://be-exen.com/wp-content/uploads/2022/12/Logo_de_CIBanco.svg.png",
+      "source_type": "Sitio original del usuario"
+    },
+    {
+      "name": "redgirasol",
+      "file": "redgirasol.jpg",
+      "source_page_url": "https://be-exen.com/",
+      "source_image_url": "https://be-exen.com/wp-content/uploads/2022/12/maxresdefault.jpg",
+      "source_type": "Sitio original del usuario"
+    },
+    {
+      "name": "ASOLMEX",
+      "file": "asolmex.png",
+      "source_page_url": "https://be-exen.com/",
+      "source_image_url": "https://be-exen.com/wp-content/uploads/2022/12/IMG_20221215_154018-copia.png",
+      "source_type": "Sitio original del usuario"
+    },
+    {
+      "name": "BBVA",
+      "file": "bbva.png",
+      "source_page_url": "https://www.bbva.com/es/especiales/nuestra-marca-logo/",
+      "source_image_url": "https://www.bbva.com/wp-content/themes/coronita-bbvacom/assets/images/logos/bbva-logo-900x269.png",
+      "source_type": "Sitio oficial"
+    }
+  ]
+}
