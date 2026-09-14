@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ubicación de BE Excellent Energy</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font:16px/1.5 system-ui,sans-serif;background:#132b20}
+#fallback,#map{position:absolute;inset:0;width:100%;height:100%;border:0}
+#map{visibility:hidden}body.ready #map{visibility:visible}body.ready #fallback{display:none}
+#controls{display:none;position:absolute;right:12px;top:120px;z-index:3;gap:8px;flex-direction:column}
+body.ready #controls{display:flex}
+button{font:600 14px/1.4 system-ui;cursor:pointer;border:1px solid #739775;background:#173322;color:#fffefa;border-radius:12px;min-height:44px;padding:10px 14px}
+button:focus-visible,a:focus-visible{outline:3px solid #ef9151;outline-offset:3px}
+.office-pin{width:142px;background:#fffefa;border:3px solid #ef9151;border-radius:16px;box-shadow:0 8px 25px #0008;padding:12px;position:relative}
+.office-pin img{display:block;width:112px;height:44px;object-fit:contain}
+.office-pin:after{content:"";position:absolute;bottom:-12px;left:calc(50% - 9px);border-left:9px solid transparent;border-right:9px solid transparent;border-top:10px solid #ef9151}
+.maplibregl-ctrl-attrib a{color:#25372b}
+#notice{position:absolute;bottom:40px;right:12px;max-width:280px;z-index:4;background:#173322;color:#fffefa;padding:10px 14px;border-radius:12px;font-size:14px}
+#notice:empty{display:none}
+</style>
+</head>
+<body>
+<iframe id="fallback" title="Ubicación en Google Maps" src="https://www.google.com/maps?q=Av.+del+Roble+3+Alamos+2a+Seccion+76160+Santiago+de+Queretaro&amp;output=embed" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div id="map" role="region" aria-label="Mapa interactivo de la oficina"></div>
+<div id="controls"><button id="center" type="button">Centrar oficina</button><button id="perspective" type="button" aria-pressed="false">Perspectiva</button></div>
+<p id="notice" role="status"></p>
+<script>
+(async function () {
+  const params = new URLSearchParams(location.hash.slice(1));
+  const key = (params.get("key") || "").trim();
+  const latText = (params.get("lat") || "").trim();
+  const lngText = (params.get("lng") || "").trim();
+  const lat = Number(latText), lng = Number(lngText);
+  if (!key || !latText || !lngText || !Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return;
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let map, failed = false;
+  let timer;
+  function fallback() {
+    if (failed) return;
+    failed = true;
+    clearTimeout(timer);
+    document.body.classList.remove("ready");
+    document.getElementById("notice").textContent = "Mostramos la ubicación en Google Maps.";
+    if (map) map.remove();
+  }
+  timer = setTimeout(fallback, 20000);
+  try {
+    await Promise.all([
+      new Promise((resolve, reject) => {
+        const css = document.createElement("link");
+        css.rel = "stylesheet"; css.href = "https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css";
+        css.onload = resolve; css.onerror = reject; document.head.appendChild(css);
+      }),
+      new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js";
+        script.onload = resolve; script.onerror = reject; document.head.appendChild(script);
+      })
+    ]);
+    if (failed) return;
+    const response = await fetch("https://api.maptiler.com/maps/streets-v2-dark/style.json?key=" + encodeURIComponent(key), { signal: AbortSignal.timeout(12000) });
+    if (!response.ok) throw new Error("Map style unavailable");
+    const style = await response.json();
+    // Preserve labels and attribution while applying the company's palette.
+    for (const layer of style.layers || []) {
+      if (layer.type === "background") layer.paint = { ...layer.paint, "background-color": "#18291e" };
+      if (layer.type === "fill" && layer["source-layer"] === "water") layer.paint = { ...layer.paint, "fill-color": "#112e2b" };
+      if (layer.type === "fill" && layer["source-layer"] === "park") layer.paint = { ...layer.paint, "fill-color": "#31563c" };
+    }
+    if (failed) return;
+    map = new maplibregl.Map({
+      container: "map", style, center: [lng, lat], zoom: 15.6, pitch: 0,
+      attributionControl: true, cooperativeGestures: true,
+      locale: {
+        "NavigationControl.ZoomIn": "Acercar", "NavigationControl.ZoomOut": "Alejar",
+        "NavigationControl.ResetBearing": "Orientar al norte",
+        "CooperativeGesturesHandler.WindowsHelpText": "Usa Ctrl + rueda para acercar el mapa",
+        "CooperativeGesturesHandler.MacHelpText": "Usa ⌘ + rueda para acercar el mapa",
+        "CooperativeGesturesHandler.MobileHelpText": "Usa dos dedos para mover el mapa"
+      }
+    });
+    map.addControl(new maplibregl.NavigationControl(), "top-right");
+    const pin = document.createElement("a");
+    pin.className = "office-pin";
+    pin.href = "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng;
+    pin.target = "_blank"; pin.rel = "noopener noreferrer"; pin.setAttribute("aria-label", "Cómo llegar a BE Excellent Energy");
+    const logo = document.createElement("img");
+    logo.src = "/brand/be-exen-logo.svg"; logo.alt = "BE Excellent Energy"; pin.appendChild(logo);
+    new maplibregl.Marker({ element: pin, anchor: "bottom", offset: [0, -10] }).setLngLat([lng, lat]).addTo(map);
+    function padding() { return { top: 50, bottom: 50, right: 100, left: innerWidth > 820 ? 365 : 40 }; }
+    function center() { map.easeTo({ center: [lng, lat], zoom: 15.6, padding: padding(), duration: reduced ? 0 : 650 }); }
+    map.once("load", () => {
+      if (failed) return;
+      clearTimeout(timer);
+      document.body.classList.add("ready");
+      center();
+    });
+    map.on("error", () => {
+      if (!document.body.classList.contains("ready")) fallback();
+      else document.getElementById("notice").textContent = "No se pudo cargar parte del mapa. Puedes usar Cómo llegar.";
+    });
+    document.getElementById("center").addEventListener("click", center);
+    document.getElementById("perspective").addEventListener("click", function () {
+      const active = this.getAttribute("aria-pressed") !== "true";
+      this.setAttribute("aria-pressed", String(active));
+      map.easeTo({ pitch: active ? 45 : 0, bearing: active ? -15 : 0, duration: reduced ? 0 : 650 });
+    });
+    addEventListener("resize", () => { if (!failed) { map.resize(); map.setPadding(padding()); } });
+    addEventListener("pagehide", () => { clearTimeout(timer); if (map && !failed) map.remove(); });
+  } catch (_) { fallback(); }
+})();
+</script>
+</body>
+</html>
