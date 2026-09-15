@@ -1,17 +1,13 @@
 import { ArrowUpRight, MapPin, MessageCircle, Navigation } from "lucide-react";
 
-const address = "Av. del Roble 3, Álamos 2a Sección, 76160 Santiago de Querétaro, Qro.";
-const directions = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(address);
+const address = "Calle Rosa de Castilla 8, 76137 Santa María Magdalena, Querétaro.";
+const directions = "https://www.google.com/maps/dir/?api=1&destination=" + "20.5936388,-100.4586914";
 
 export function Location() {
   // These values are public map configuration, never server credentials.
   const key = process.env.NEXT_PUBLIC_MAPTILER_KEY?.trim() || "";
-  const latitude = process.env.NEXT_PUBLIC_OFFICE_LATITUDE?.trim() || "";
-  const longitude = process.env.NEXT_PUBLIC_OFFICE_LONGITUDE?.trim() || "";
-  const configured = Boolean(key && latitude && longitude) &&
-    Number.isFinite(Number(latitude)) && Math.abs(Number(latitude)) <= 90 &&
-    Number.isFinite(Number(longitude)) && Math.abs(Number(longitude)) <= 180;
-  const params = configured ? new URLSearchParams({ key, lat: latitude, lng: longitude }).toString() : "";
+  // Pin supplied by the owner: https://maps.app.goo.gl/MHv3N4QpdnAY1JMYA
+  const params = new URLSearchParams({ key, lat: "20.5936388", lng: "-100.4586914" }).toString();
   return (
     <section className="section location-section location-redesign" id="ubicacion" aria-labelledby="location-title">
       <div className="container">

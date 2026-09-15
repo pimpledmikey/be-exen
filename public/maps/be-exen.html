@@ -20,7 +20,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #ef9151;outline-offset:3p
 </style>
 </head>
 <body>
-<iframe id="fallback" title="Ubicación en Google Maps" src="https://www.google.com/maps?q=Av.+del+Roble+3+Alamos+2a+Seccion+76160+Santiago+de+Queretaro&amp;output=embed" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe id="fallback" title="Ubicación en Google Maps" src="https://www.google.com/maps?q=20.5936388,-100.4586914&amp;output=embed" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 <div id="map" role="region" aria-label="Mapa interactivo de la oficina"></div>
 <div id="controls"><button id="center" type="button">Centrar oficina</button><button id="perspective" type="button" aria-pressed="false">Perspectiva</button></div>
 <p id="notice" role="status"></p>
@@ -28,10 +28,10 @@ button:focus-visible,a:focus-visible{outline:3px solid #ef9151;outline-offset:3p
 (async function () {
   const params = new URLSearchParams(location.hash.slice(1));
   const key = (params.get("key") || "").trim();
-  const latText = (params.get("lat") || "").trim();
-  const lngText = (params.get("lng") || "").trim();
+  const latText = (params.get("lat") || "20.5936388").trim();
+  const lngText = (params.get("lng") || "-100.4586914").trim();
   const lat = Number(latText), lng = Number(lngText);
-  if (!key || !latText || !lngText || !Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return;
+  if (!latText || !lngText || !Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let map, failed = false;
   let timer;
@@ -58,7 +58,10 @@ button:focus-visible,a:focus-visible{outline:3px solid #ef9151;outline-offset:3p
       })
     ]);
     if (failed) return;
-    const response = await fetch("https://api.maptiler.com/maps/streets-v2-dark/style.json?key=" + encodeURIComponent(key), { signal: AbortSignal.timeout(12000) });
+    const styleUrl = key
+      ? "https://api.maptiler.com/maps/streets-v2-dark/style.json?key=" + encodeURIComponent(key)
+      : "https://tiles.openfreemap.org/styles/dark";
+    const response = await fetch(styleUrl, { signal: AbortSignal.timeout(12000) });
     if (!response.ok) throw new Error("Map style unavailable");
     const style = await response.json();
     // Preserve labels and attribution while applying the company's palette.
@@ -87,7 +90,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #ef9151;outline-offset:3p
     const logo = document.createElement("img");
     logo.src = "/brand/be-exen-logo.svg"; logo.alt = "BE Excellent Energy"; pin.appendChild(logo);
     new maplibregl.Marker({ element: pin, anchor: "bottom", offset: [0, -10] }).setLngLat([lng, lat]).addTo(map);
-    function padding() { return { top: 50, bottom: 50, right: 100, left: innerWidth > 820 ? 365 : 40 }; }
+    function padding() { return { top: 50, bottom: 50, right: 100, left: window.parent.matchMedia("(min-width: 821px)").matches ? 365 : 40 }; }
     function center() { map.easeTo({ center: [lng, lat], zoom: 15.6, padding: padding(), duration: reduced ? 0 : 650 }); }
     map.once("load", () => {
       if (failed) return;

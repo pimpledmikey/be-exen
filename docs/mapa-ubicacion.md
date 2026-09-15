@@ -1,32 +1,34 @@
 # Ubicación y aliados — 14 de septiembre de 2026
 
-## Cambios
-- Aliados visibles fuera del desplegable; se conservan los nueve archivos originales.
-- Mapa de ancho completo, tarjeta de contacto flotante en escritorio y debajo en móvil.
-- MapLibre GL JS 5.6.0 cargado solo en el iframe del mapa cuando existe configuración válida.
-- Estilo oscuro de MapTiler con tonos verdes, marcador del logo, controles de zoom, centrado y perspectiva.
-- Sin coordenadas inventadas, solicitudes de geolocalización del visitante ni geocodificación automática.
-- Si falta configuración o falla la carga inicial, se conserva el mapa de Google basado en la dirección existente.
-- No se añaden dependencias npm ni se modifica el lockfile.
+## Implementación
+- Los nueve aliados son visibles fuera del desplegable, con sus imágenes originales.
+- Mapa amplio y tarjeta verde de contacto: flotante en escritorio y debajo en móvil.
+- MapLibre GL JS 5.6.0 con OpenFreeMap Dark por defecto, sin clave.
+- Tonos verdes, marcador con el logo, zoom, centrado y perspectiva; se conserva la atribución.
+- MapTiler es opcional: NEXT_PUBLIC_MAPTILER_KEY selecciona su estilo oscuro al compilar. Utilizar una clave pública limitada a los dominios del sitio.
+- Respaldo de Google Maps ante error inicial, sin pedir geolocalización del visitante.
 
-## Activar MapLibre en Hostinger
-Configurar antes de compilar:
-- NEXT_PUBLIC_MAPTILER_KEY: clave pública de mapas de MapTiler.
-- NEXT_PUBLIC_OFFICE_LATITUDE: latitud decimal confirmada de la oficina.
-- NEXT_PUBLIC_OFFICE_LONGITUDE: longitud decimal confirmada de la oficina.
+## Ubicación confirmada por el propietario
+Enlace recibido: https://maps.app.goo.gl/MHv3N4QpdnAY1JMYA
 
-La clave es visible en el navegador por diseño. Usar una clave para mapas del navegador, con dominios autorizados para be-exen.com y staging.be-exen.com; nunca una credencial privada de administración. Revisar plan/cuotas de MapTiler.
-Volver a compilar tras configurar variables: Next.js prerenderiza esta página.
+El enlace redirige a Calle Rosa de Castilla 8, 76137 Santa María Magdalena, Querétaro.
+Coordenadas del punto: latitud 20.5936388; longitud -100.4586914.
+Se usan los campos !3d/!4d del punto de Google Maps, no las coordenadas @ del centro de cámara.
+Esta dirección sustituye la antigua Av. del Roble 3 de la web anterior.
+La tarjeta, el mapa de respaldo, el marcador y Cómo llegar usan la ubicación confirmada.
 
-La dirección conservada es Av. del Roble 3, Álamos 2a Sección, 76160 Santiago de Querétaro. El propietario debe confirmar el pin exacto antes de configurar las coordenadas.
-Sin estos tres valores el nuevo diseño ya funciona, pero su cartografía sigue siendo Google Maps.
+## Configuración
+No se necesita una cuenta o clave para el proveedor por defecto.
+Para elegir MapTiler, configurar NEXT_PUBLIC_MAPTILER_KEY en Hostinger y volver a compilar.
+Las coordenadas están en app/location.tsx y en el respaldo de public/maps/be-exen.html; ya no se necesitan variables de latitud/longitud.
 
 ## Verificación
-Revisión de integración de componentes, conservación de archivos, enlaces, validación de coordenadas y sintaxis del JavaScript del mapa.
-El entorno de ejecución local no estaba disponible para compilar Next.js o inspeccionar el navegador en esta sesión.
-Antes de publicar: ejecutar npm ci y npm run build, revisar móvil/escritorio y probar mapa configurado, sin clave, clave inválida y WebGL no disponible.
-Verificar el pin con el propietario. La publicación del dominio y limpieza de caché se realizan en Hostinger.
+La compilación y comprobación de esta revisión se documentan en el PR #2.
+Validar escritorio/móvil, centrado, perspectiva, navegación a Google Maps y respaldo.
+La configuración del dominio y purga de caché pertenecen a Hostinger.
 
-## Referencias
+## Fuentes
+- Ubicación proporcionada directamente por el propietario.
+- https://openfreemap.org/quick_start/
 - https://maplibre.org/maplibre-gl-js/docs/examples/custom-marker-icons/
 - https://docs.maptiler.com/sdk-js/api/map-styles/
