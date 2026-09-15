@@ -3,7 +3,6 @@ import {
   ArrowUpRight,
   Menu,
   Mail,
-  MapPin,
   Camera,
   UsersRound,
   Phone,
@@ -15,6 +14,7 @@ import {
 import { AboutDetails, ServicesMarquee, Solutions } from "./site-sections";
 import { Financing } from "./financing";
 import { Allies } from "./allies";
+import { Location } from "./location";
 
 const whatsappUrl =
   "https://wa.me/524421040693?text=Hola%20BE%20Excellent%20Energy%2C%20quiero%20cotizar%20un%20proyecto%20energ%C3%A9tico.";
@@ -203,7 +203,8 @@ export default function Home() {
               <a className="text-link" href="#soluciones">Descubre qué podemos hacer por ti <ArrowRight size={18} aria-hidden="true" /></a>
             </div>
           </div>
-          <AboutDetails><Allies /></AboutDetails>
+          <AboutDetails />
+          <Allies />
         </div>
       </section>
 
@@ -306,17 +307,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section location-section" id="ubicacion">
-        <div className="container location-grid">
-          <div className="location-copy">
-            <p className="section-kicker">Ubicación</p>
-            <h2>Conversemos sobre tu energía.</h2>
-            <address><MapPin size={22} aria-hidden="true" /><span>Av. del Roble 3, Álamos 2a Sección,<br />76160 Santiago de Querétaro, Qro.</span></address>
-            <a className="button button-primary" href="https://www.google.com/maps/search/?api=1&query=Av.+del+Roble+3+Alamos+2a+Seccion+76160+Santiago+de+Queretaro" target="_blank" rel="noopener noreferrer">Abrir en Google Maps <ArrowUpRight size={18} aria-hidden="true" /></a>
-          </div>
-          <iframe title="Mapa de BE Excellent Energy en Av. del Roble 3, Querétaro" src="https://www.google.com/maps?q=Av.+del+Roble+3+Alamos+2a+Seccion+76160+Santiago+de+Queretaro&output=embed" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
-        </div>
-      </section>
+      <Location />
 
       <footer className="site-footer">
         <div className="container footer-grid">
