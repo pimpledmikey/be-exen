@@ -30,12 +30,24 @@ Abre [http://localhost:3000](http://localhost:3000).
 
 ## Contenido
 
-La primera versión incluye:
-
 - Inicio con propuesta de valor y llamada a cotización.
-- Soluciones residencial, comercial e industrial.
-- Consultoría para el Mercado Eléctrico Mayorista.
-- Proceso de proyecto llave en mano.
-- Beneficios y contacto directo por WhatsApp.
+- Cifras de impacto, quiénes somos y aliados.
+- Soluciones residencial, comercial, industrial e híbrida, y consultoría para el Mercado Eléctrico Mayorista.
+- Proyectos reales y clientes.
+- Proceso llave en mano y cómo funciona un sistema solar.
+- Financiamiento FIDE y calculadora solar.
+- Sostenibilidad (ODS), preguntas frecuentes, contacto y ubicación.
+- Aviso de privacidad en `/aviso-de-privacidad`.
+
+Los datos de la empresa (contacto, redes, cifras) se editan en `app/company.ts`.
+El detalle de cada revisión está en `docs/`.
+
+## Dominio y buscadores
+
+El sitio asume `https://be-exen.com` como dominio principal (URL canónica,
+`sitemap.xml` y datos estructurados). Para otro dominio, define
+`NEXT_PUBLIC_SITE_URL` antes de compilar. `staging.be-exen.com` se sirve con
+`noindex`. Las URLs del sitio anterior en WordPress se redirigen desde
+`next.config.ts`.
 
 © BE Excellent Energy
