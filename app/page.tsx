@@ -1,6 +1,8 @@
+import type { Metadata } from "next";
 import {
   ArrowRight,
   ArrowUpRight,
+  BriefcaseBusiness,
   Menu,
   Mail,
   Camera,
@@ -15,11 +17,25 @@ import { AboutDetails, ServicesMarquee, Solutions } from "./site-sections";
 import { Financing } from "./financing";
 import { Allies } from "./allies";
 import { Location } from "./location";
+import { Impact } from "./impact";
+import { ProjectsGallery } from "./projects-gallery";
+import { Clients } from "./clients";
+import { HowItWorks } from "./how-it-works";
+import { Estimator } from "./estimator";
+import { Sustainability } from "./sustainability";
+import { Faq } from "./faq";
+import { faqs } from "./faq-data";
+import { BrandLogo, SiteFooter } from "./site-chrome";
+import { site, siteUrl } from "./company";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const whatsappUrl =
   "https://wa.me/524421040693?text=Hola%20BE%20Excellent%20Energy%2C%20quiero%20cotizar%20un%20proyecto%20energ%C3%A9tico.";
 
-const process = [
+const processSteps = [
   {
     step: "01",
     title: "Análisis y asesoría",
@@ -46,19 +62,60 @@ const process = [
   },
 ];
 
-function BrandLogo({ className = "" }: { className?: string }) {
-  return (
-    <img
-      src="/brand/be-exen-logo.svg"
-      alt="BE Excellent Energy"
-      className={className}
-    />
-  );
-}
+// Datos estructurados para buscadores: la empresa y sus preguntas frecuentes.
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": `${siteUrl}/#empresa`,
+      name: site.name,
+      alternateName: site.shortName,
+      legalName: site.legalName,
+      description:
+        "Diseño e instalación de sistemas de paneles solares para hogares, comercios e industria, y consultoría energética.",
+      url: siteUrl,
+      logo: `${siteUrl}/brand/be-exen-logo.svg`,
+      image: `${siteUrl}/projects/euro-te-cubierta.webp`,
+      telephone: site.phoneE164,
+      email: site.email,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: `${site.address.street}, ${site.address.neighborhood}`,
+        addressLocality: site.address.city,
+        addressRegion: site.address.region,
+        postalCode: site.address.postalCode,
+        addressCountry: site.address.country,
+      },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: site.geo.latitude,
+        longitude: site.geo.longitude,
+      },
+      sameAs: [site.social.instagram, site.social.linkedin],
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${siteUrl}/#preguntas`,
+      mainEntity: faqs.map(({ question, answer }) => ({
+        "@type": "Question",
+        name: question,
+        acceptedAnswer: { "@type": "Answer", text: answer },
+      })),
+    },
+  ],
+};
 
 export default function Home() {
   return (
     <main className="site-shell">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+        }}
+      />
+
       <header className="site-header">
         <div className="container header-inner">
           <a href="#inicio" aria-label="BE Excellent Energy, inicio">
@@ -68,9 +125,10 @@ export default function Home() {
           <nav className="desktop-nav" aria-label="Navegación principal">
             <a href="#nosotros">Quiénes somos</a>
             <a href="#soluciones">Soluciones</a>
-            <a href="#proceso">Cómo lo hacemos</a>
+            <a href="#proyectos">Proyectos</a>
+            <a href="#financiamiento">Financiamiento</a>
+            <a href="#calculadora">Calculadora</a>
             <a href="#contacto">Contacto</a>
-            <a href="#ubicacion">Ubicación</a>
           </nav>
 
           <a
@@ -90,8 +148,11 @@ export default function Home() {
             <nav aria-label="Navegación móvil">
               <a href="#nosotros">Quiénes somos</a>
               <a href="#soluciones">Soluciones</a>
+              <a href="#proyectos">Proyectos y clientes</a>
               <a href="#proceso">Cómo lo hacemos</a>
               <a href="#financiamiento">Financiamiento FIDE</a>
+              <a href="#calculadora">Calculadora solar</a>
+              <a href="#preguntas">Preguntas frecuentes</a>
               <a href="#contacto">Contacto</a>
               <a href="#ubicacion">Ubicación</a>
               <a href={whatsappUrl} target="_blank" rel="noreferrer">
@@ -185,6 +246,8 @@ export default function Home() {
         <ServicesMarquee />
       </section>
 
+      <Impact />
+
       <section className="section story-section" id="nosotros">
         <div className="container">
           <div className="story-grid">
@@ -248,6 +311,24 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="section projects-section" id="proyectos" aria-labelledby="projects-title">
+        <div className="container">
+          <div className="section-heading split-heading">
+            <div>
+              <p className="section-kicker">Proyectos y clientes</p>
+              <h2 id="projects-title">Instalaciones reales, trabajando todos los días.</h2>
+            </div>
+            <p>
+              Una muestra de los sistemas que hemos diseñado e instalado para
+              la industria, el comercio y el hogar.
+            </p>
+          </div>
+
+          <ProjectsGallery />
+          <Clients />
+        </div>
+      </section>
+
       <section className="section process-section" id="proceso">
         <div className="container">
           <div className="section-heading process-heading">
@@ -256,21 +337,44 @@ export default function Home() {
           </div>
 
           <div className="process-grid">
-            {process.map((item, index) => (
+            {processSteps.map((item, index) => (
               <article className="process-card" key={item.step}>
                 <div className="process-step">
                   <span>{item.step}</span>
-                  {index < process.length - 1 && <i aria-hidden="true" />}
+                  {index < processSteps.length - 1 && <i aria-hidden="true" />}
                 </div>
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
               </article>
             ))}
           </div>
+
+          <HowItWorks />
         </div>
       </section>
 
       <Financing />
+
+      <section className="section estimator-section" id="calculadora" aria-labelledby="estimator-title">
+        <div className="container">
+          <div className="section-heading split-heading">
+            <div>
+              <p className="section-kicker">Calculadora solar</p>
+              <h2 id="estimator-title">¿Cuántos paneles necesitas?</h2>
+            </div>
+            <p>
+              Con el consumo de tu recibo de luz te damos una primera idea del
+              sistema que podría cubrirlo.
+            </p>
+          </div>
+
+          <Estimator />
+        </div>
+      </section>
+
+      <Sustainability />
+
+      <Faq />
 
       <section className="cta-section" id="contacto">
         <div className="container">
@@ -303,40 +407,14 @@ export default function Home() {
             <a href="mailto:hola@be-exen.com"><Mail aria-hidden="true" size={22} /><span><small>Escríbenos</small>hola@be-exen.com</span></a>
             <a href="https://www.instagram.com/panelesbeexen/" target="_blank" rel="noopener noreferrer"><Camera aria-hidden="true" size={22} /><span><small>Instagram</small>@panelesbeexen</span></a>
             <a href="https://www.facebook.com/share/1Z14KDDHeG/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer"><UsersRound aria-hidden="true" size={22} /><span><small>Facebook</small>Paneles Solares</span></a>
+            <a href={site.social.linkedin} target="_blank" rel="noopener noreferrer"><BriefcaseBusiness aria-hidden="true" size={22} /><span><small>LinkedIn</small>BE Excellent Energy</span></a>
           </div>
         </div>
       </section>
 
       <Location />
 
-      <footer className="site-footer">
-        <div className="container footer-grid">
-          <div className="footer-brand">
-            <BrandLogo className="footer-logo" />
-            <p>
-              Soluciones energéticas para hogares, comercios e industria en
-              México.
-            </p>
-          </div>
-          <div className="footer-column">
-            <strong>Navegación</strong>
-            <a href="#nosotros">Quiénes somos</a>
-            <a href="#soluciones">Soluciones</a>
-            <a href="#proceso">Cómo lo hacemos</a>
-            <a href="#financiamiento">Financiamiento FIDE</a>
-          </div>
-          <div className="footer-column">
-            <strong>Contacto</strong>
-            <a href="tel:+524421040693">442 104 0693</a>
-            <a href="mailto:hola@be-exen.com">hola@be-exen.com</a>
-            <a href="#ubicacion">Querétaro, México</a>
-          </div>
-        </div>
-        <div className="container footer-bottom">
-          <span>© {new Date().getFullYear()} BE Excellent Energy</span>
-          <span>Ingeniería · Energía · Futuro</span>
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }
