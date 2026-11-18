@@ -1,0 +1,46 @@
+name: Publicar be-exen.com
+
+# Compila la versión estática (npm run build:static) y la guarda en la rama
+# sitio-estatico, que Hostinger clona con Git en public_html/sitio/ de
+# be-exen.com. Detalles en docs/despliegue.md.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publicar-be-exen
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:static
+      - name: Guardar el sitio en la rama sitio-estatico
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git clone --quiet --depth 1 --branch sitio-estatico \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" publicacion
+          find publicacion -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -R out/. publicacion/
+          cd publicacion
+          git add --all
+          if git diff --cached --quiet; then
+            echo "El sitio no cambió."
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898283+github-actions[bot]@users.noreply.github.com" \
+            commit --quiet -m "Build static site from ${GITHUB_SHA::7}"
+          git push --quiet origin HEAD:sitio-estatico
