@@ -19,14 +19,14 @@ npm run dev
 
 Abre [http://localhost:3000](http://localhost:3000).
 
-## Despliegue en Hostinger Web Apps
+## Despliegue en Hostinger
 
-1. En hPanel, abre **Sitios web → Web Apps → Añadir sitio web**.
-2. Selecciona **Importar repositorio Git**.
-3. Conecta GitHub y elige `pimpledmikey/be-exen`.
-4. Hostinger detectará Next.js automáticamente.
-5. Configura Node.js 22, ejecuta `npm run build` y usa `npm run start` para iniciar.
-6. Revisa la vista previa antes de conectar `be-exen.com`.
+- `staging.be-exen.com`: aplicación Node.js; Hostinger compila con `npm run build`.
+- `be-exen.com`: versión estática; `npm run build:static` genera `out/` con su
+  `.htaccess`, que se sube a `public_html` sin borrar lo demás (ahí también
+  vive `plataforma.be-exen.com`).
+
+Pasos, comprobaciones y cómo volver a WordPress: `docs/despliegue.md`.
 
 ## Contenido
 
@@ -37,7 +37,7 @@ Abre [http://localhost:3000](http://localhost:3000).
 - Proceso llave en mano y cómo funciona un sistema solar.
 - Financiamiento FIDE y calculadora solar.
 - Sostenibilidad (ODS), preguntas frecuentes, contacto y ubicación.
-- Aviso de privacidad en `/aviso-de-privacidad`.
+- Aviso de privacidad en `/aviso-de-privacidad/`.
 
 Los datos de la empresa (contacto, redes, cifras) se editan en `app/company.ts`.
 El detalle de cada revisión está en `docs/`.

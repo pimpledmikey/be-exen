@@ -28,7 +28,7 @@ export function SiteFooter() {
           <Link href="/#calculadora">Calculadora solar</Link>
           <Link href="/#sostenibilidad">Sostenibilidad</Link>
           <Link href="/#preguntas">Preguntas frecuentes</Link>
-          <Link href="/aviso-de-privacidad">Aviso de privacidad</Link>
+          <Link href="/aviso-de-privacidad/">Aviso de privacidad</Link>
         </div>
         <div className="footer-column">
           <strong>Contacto</strong>
