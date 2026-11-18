@@ -1,0 +1,55 @@
+# BE Excellent Energy (be-exen.com): sitio estático (Next.js export).
+# Generado por scripts/write-htaccess.mjs; no editar a mano.
+
+ErrorDocument 404 /404.html
+ErrorDocument 403 /404.html
+DirectoryIndex index.html
+
+# Caché del navegador: las mismas reglas que tenía el sitio anterior, salvo el
+# HTML, que se revalida siempre para que los cambios se vean al momento.
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType image/jpg "access plus 1 year"
+ExpiresByType image/jpeg "access plus 1 year"
+ExpiresByType image/gif "access plus 1 year"
+ExpiresByType image/png "access plus 1 year"
+ExpiresByType text/css "access plus 1 month"
+ExpiresByType application/pdf "access plus 1 month"
+ExpiresByType text/javascript "access plus 1 month"
+ExpiresByType image/x-icon "access plus 1 year"
+ExpiresDefault "access plus 1 weeks"
+ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# El sitio no tiene código de servidor: ningún archivo .php se ejecuta (ni
+# restos de WordPress o de la plataforma retirada) y los datos de Git no se
+# sirven.
+RewriteRule \.php$ - [F,L]
+RewriteRule (^|/)\.git(/|$) - [F,L]
+
+# URLs del sitio anterior (WordPress).
+RewriteRule ^residencial/?$ /#soluciones [R=301,L,NE]
+RewriteRule ^comercio/?$ /#soluciones [R=301,L,NE]
+RewriteRule ^industria/?$ /#soluciones [R=301,L,NE]
+RewriteRule ^sunpower/?$ /#soluciones [R=301,L,NE]
+RewriteRule ^nosotros-2nosotros/?$ /#nosotros [R=301,L,NE]
+RewriteRule ^clientes/?$ /#proyectos [R=301,L,NE]
+RewriteRule ^vinculos/?$ /#nosotros [R=301,L,NE]
+RewriteRule ^contacto/?$ /#contacto [R=301,L,NE]
+RewriteRule ^blog/?$ / [R=301,L,NE]
+RewriteRule ^2021(/.*)?$ / [R=301,L,NE]
+RewriteRule ^2022(/.*)?$ / [R=301,L,NE]
+RewriteRule ^category(/.*)?$ / [R=301,L,NE]
+RewriteRule ^author(/.*)?$ / [R=301,L,NE]
+RewriteRule ^feed/?$ / [R=301,L,NE]
+RewriteRule ^sitemap_index\.xml$ /sitemap.xml [R=301,L,NE]
+RewriteRule ^page-sitemap\.xml$ /sitemap.xml [R=301,L,NE]
+RewriteRule ^post-sitemap\.xml$ /sitemap.xml [R=301,L,NE]
+RewriteRule ^category-sitemap\.xml$ /sitemap.xml [R=301,L,NE]
+RewriteRule ^author-sitemap\.xml$ /sitemap.xml [R=301,L,NE]
+RewriteRule ^e-landing-page-sitemap\.xml$ /sitemap.xml [R=301,L,NE]
+</IfModule>
