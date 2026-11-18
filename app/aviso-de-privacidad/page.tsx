@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Aviso de privacidad | BE Excellent Energy",
   description:
     "Aviso de privacidad de BE Excellent Energy: qué datos personales solicitamos, para qué los usamos y cómo ejercer tus derechos.",
-  alternates: { canonical: "/aviso-de-privacidad" },
+  alternates: { canonical: "/aviso-de-privacidad/" },
 };
 
 // Texto migrado del aviso publicado en el sitio anterior (be-exen.com,
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 // autoridad de protección de datos vigente.
 const responsibleAddress =
   "Corporativo High Park Querétaro, Lic. Manuel Gómez Morin 3960, Centro Sur, 76090 Santiago de Querétaro, Qro.";
-const pageUrl = `${siteUrl}/aviso-de-privacidad`;
+const pageUrl = `${siteUrl}/aviso-de-privacidad/`;
 
 export default function PrivacyNotice() {
   return (
@@ -140,7 +140,7 @@ export default function PrivacyNotice() {
             ofrecimiento de nuestros servicios o productos y prácticas de
             mercado. Estas modificaciones estarán disponibles al público a
             través de nuestra página de internet{" "}
-            <Link href="/aviso-de-privacidad">{pageUrl}</Link>.
+            <Link href="/aviso-de-privacidad/">{pageUrl}</Link>.
           </p>
           <p>
             Este aviso de privacidad se rige por la Ley Federal de Protección

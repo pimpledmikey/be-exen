@@ -1,45 +1,46 @@
 import type { NextConfig } from "next";
 
+import legacyRedirects from "./deploy/legacy-redirects.json";
+
+// El mismo sitio se publica de dos formas:
+// - Servidor Node.js (staging.be-exen.com): `npm run build`.
+// - Archivos estáticos (be-exen.com, hosting compartido): `npm run build:static`,
+//   que genera out/ con su .htaccess. Ahí las redirecciones las hace el
+//   servidor web (scripts/write-htaccess.mjs), no Next.js.
+const isStaticExport = process.env.STATIC_EXPORT === "1";
+
 // URLs del sitio anterior (WordPress) → secciones equivalentes del sitio nuevo.
-// Evita enlaces rotos y conserva el posicionamiento al reemplazar WordPress.
-const legacyRedirects: Array<[source: string, destination: string]> = [
-  ["/residencial", "/#soluciones"],
-  ["/comercio", "/#soluciones"],
-  ["/industria", "/#soluciones"],
-  ["/sunpower", "/#soluciones"],
-  ["/nosotros-2nosotros", "/#nosotros"],
-  ["/clientes", "/#proyectos"],
-  ["/vinculos", "/#nosotros"],
-  ["/contacto", "/#contacto"],
-  ["/blog", "/"],
-  ["/2021/:path*", "/"],
-  ["/2022/:path*", "/"],
-  ["/category/:path*", "/"],
-  ["/author/:path*", "/"],
-  ["/feed", "/"],
-  ["/sitemap_index.xml", "/sitemap.xml"],
-  ["/page-sitemap.xml", "/sitemap.xml"],
-  ["/post-sitemap.xml", "/sitemap.xml"],
-];
+const redirects = legacyRedirects as Array<[source: string, destination: string]>;
 
 const nextConfig: NextConfig = {
-  async redirects() {
-    return legacyRedirects.map(([source, destination]) => ({
-      source,
-      destination,
-      permanent: true,
-    }));
-  },
-  async headers() {
-    return [
-      {
-        // El entorno de pruebas no debe aparecer en buscadores.
-        source: "/:path*",
-        has: [{ type: "host", value: "staging.be-exen.com" }],
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      },
-    ];
-  },
+  poweredByHeader: false,
+  // URLs con barra final, como las tenía WordPress (/aviso-de-privacidad/).
+  // En la versión estática cada página queda como carpeta/index.html.
+  trailingSlash: true,
+  // El sitio usa <img> directamente: se desactiva el optimizador de imágenes
+  // de Next.js, que no hace falta y añade superficie de ataque.
+  images: { unoptimized: true },
+  ...(isStaticExport
+    ? { output: "export" as const }
+    : {
+        async redirects() {
+          return redirects.map(([source, destination]) => ({
+            source,
+            destination,
+            permanent: true,
+          }));
+        },
+        async headers() {
+          return [
+            {
+              // El entorno de pruebas no debe aparecer en buscadores.
+              source: "/:path*",
+              has: [{ type: "host", value: "staging.be-exen.com" }],
+              headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+            },
+          ];
+        },
+      }),
 };
 
 export default nextConfig;

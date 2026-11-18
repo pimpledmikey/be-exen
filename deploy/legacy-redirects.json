@@ -1,0 +1,22 @@
+[
+  ["/residencial", "/#soluciones"],
+  ["/comercio", "/#soluciones"],
+  ["/industria", "/#soluciones"],
+  ["/sunpower", "/#soluciones"],
+  ["/nosotros-2nosotros", "/#nosotros"],
+  ["/clientes", "/#proyectos"],
+  ["/vinculos", "/#nosotros"],
+  ["/contacto", "/#contacto"],
+  ["/blog", "/"],
+  ["/2021/:path*", "/"],
+  ["/2022/:path*", "/"],
+  ["/category/:path*", "/"],
+  ["/author/:path*", "/"],
+  ["/feed", "/"],
+  ["/sitemap_index.xml", "/sitemap.xml"],
+  ["/page-sitemap.xml", "/sitemap.xml"],
+  ["/post-sitemap.xml", "/sitemap.xml"],
+  ["/category-sitemap.xml", "/sitemap.xml"],
+  ["/author-sitemap.xml", "/sitemap.xml"],
+  ["/e-landing-page-sitemap.xml", "/sitemap.xml"]
+]
