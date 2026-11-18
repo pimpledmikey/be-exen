@@ -1,7 +1,7 @@
 name: Publicar be-exen.com
 
 # Compila la versión estática (npm run build:static) y la guarda en la rama
-# sitio-estatico, que Hostinger clona con Git en public_html/sitio/ de
+# sitio-estatico, que Hostinger publica con Git en public_html de
 # be-exen.com. Detalles en docs/despliegue.md.
 on:
   push:

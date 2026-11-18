@@ -25,8 +25,7 @@ Abre [http://localhost:3000](http://localhost:3000).
   `npm run build`.
 - `be-exen.com`: versión estática. Con cada cambio en `main`, GitHub Actions
   compila `npm run build:static` y guarda `out/` en la rama `sitio-estatico`,
-  que Hostinger clona con Git en `public_html/sitio/`. No se publica en la raíz
-  de `public_html` porque ahí también vive `plataforma.be-exen.com`.
+  que Hostinger publica con Git en `public_html`.
 
 Pasos y comprobaciones: `docs/despliegue.md`.
 
@@ -51,6 +50,6 @@ El sitio asume `https://be-exen.com` como dominio principal (URL canónica,
 `NEXT_PUBLIC_SITE_URL` antes de compilar. `staging.be-exen.com` se sirve con
 `noindex`. Las URLs del sitio anterior en WordPress se redirigen según
 `deploy/legacy-redirects.json`: en staging lo hace `next.config.ts` y en
-`be-exen.com` el `.htaccess` de `public_html`.
+`be-exen.com` el `.htaccess` que genera `npm run build:static`.
 
 © BE Excellent Energy
