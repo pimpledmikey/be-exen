@@ -1,6 +1,7 @@
-// Genera los .htaccess de la versión estática (out/) que se publica en
-// be-exen.com, un hosting compartido de Hostinger con LiteSpeed (compatible
-// con las reglas de Apache). Se ejecuta con `npm run build:static`.
+// Genera los .htaccess de la versión estática que se publica en be-exen.com,
+// un hosting compartido de Hostinger con LiteSpeed (compatible con las reglas
+// de Apache). Se ejecuta con `npm run build:static` y los deja en out/, que se
+// publica tal cual en public_html (docs/despliegue.md).
 import { readFile, writeFile } from "node:fs/promises";
 
 const root = new URL("../", import.meta.url);
@@ -25,17 +26,15 @@ const redirectRules = redirects
   .map(([source, destination]) => `RewriteRule ${toPattern(source)} ${destination} [R=301,L,NE]`)
   .join("\n");
 
-const htaccess = `# BE Excellent Energy: versión estática del sitio (Next.js export).
+const htaccess = `# BE Excellent Energy (be-exen.com): sitio estático (Next.js export).
 # Generado por scripts/write-htaccess.mjs; no editar a mano.
-#
-# Reemplaza al .htaccess de WordPress. Los archivos de WordPress siguen en el
-# servidor pero ya no se sirven. Cómo volver atrás: docs/despliegue.md.
 
 ErrorDocument 404 /404.html
+ErrorDocument 403 /404.html
+DirectoryIndex index.html
 
-# Caché del navegador: las mismas reglas que tenía WordPress (también aplican
-# a las carpetas vecinas), salvo el HTML, que se revalida siempre para que los
-# cambios del sitio se vean al momento.
+# Caché del navegador: las mismas reglas que tenía el sitio anterior, salvo el
+# HTML, que se revalida siempre para que los cambios se vean al momento.
 <IfModule mod_expires.c>
 ExpiresActive On
 ExpiresByType image/jpg "access plus 1 year"
@@ -54,26 +53,18 @@ ExpiresByType text/html "access plus 0 seconds"
 RewriteEngine On
 RewriteBase /
 
-# Solo aplica a be-exen.com: los subdominios (como plataforma.be-exen.com)
-# conservan su comportamiento.
-RewriteCond %{HTTP_HOST} !^(www\\.)?be-exen\\.com$ [NC]
-RewriteRule ^ - [L]
+# Una sola dirección: www.be-exen.com redirige a be-exen.com.
+RewriteCond %{HTTP_HOST} ^www\\.be-exen\\.com$ [NC]
+RewriteRule ^(.*)$ https://be-exen.com/$1 [R=301,L]
 
-RewriteRule ^plataforma(/|$) - [L]
-RewriteRule ^\\.well-known/ - [L]
+# El sitio no tiene código de servidor: ningún archivo .php se ejecuta (ni
+# restos de WordPress o de la plataforma retirada) y los datos de Git no se
+# sirven.
+RewriteRule \\.php$ - [F,L]
+RewriteRule (^|/)\\.git(/|$) - [F,L]
 
-# WordPress queda retirado: su panel y sus scripts PHP no responden.
-RewriteRule ^(wp-admin|wp-includes)(/|$) - [F,L]
-RewriteRule ^wp-content/.*\\.php$ - [F,L]
-RewriteRule ^(index|xmlrpc|wp-[a-z-]+)\\.php$ - [F,L]
-
-# URLs del sitio anterior.
+# URLs del sitio anterior (WordPress).
 ${redirectRules}
-
-# Inicio: index.html y no el index.php de WordPress. Las demás páginas son
-# carpeta/index.html (trailingSlash en next.config.ts) y el servidor las
-# sirve directamente, añadiendo la barra final si falta.
-RewriteRule ^$ /index.html [L]
 </IfModule>
 `;
 

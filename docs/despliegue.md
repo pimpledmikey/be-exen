@@ -1,55 +1,96 @@
 # Despliegue en Hostinger
 
 El sitio se publica de dos formas a partir del mismo código. Ambos sitios están
-en la cuenta de hosting `u322888101`.
+en la cuenta de hosting `u322888101` (plan Business).
 
-| Sitio | Tipo | Cómo se compila |
+| Sitio | Tipo | Qué se publica |
 | --- | --- | --- |
-| `staging.be-exen.com` | Aplicación Node.js (Next.js) | `npm run build` (lo hace Hostinger) |
-| `be-exen.com` | Archivos estáticos | `npm run build:static` (en local, genera `out/`) |
+| `staging.be-exen.com` | Aplicación Node.js (Next.js) | La rama `main`, compilada por Hostinger con `npm run build`; hoy no se puede actualizar (ver más abajo) |
+| `be-exen.com` | Archivos estáticos | La rama `sitio-estatico`: el `out/` de `npm run build:static`, que GitHub Actions actualiza con cada push a `main` |
 
-## Staging: staging.be-exen.com
+## Publicación automática con Git
 
-- Configuración de compilación en Hostinger: Node.js 22, Next.js, salida `.next`,
-  script `build`, npm.
-- No tiene despliegue automático: cada versión se compila a mano, desde `main`
-  en GitHub o subiendo un `.zip` del código (`git archive`).
-- Responde con `X-Robots-Tag: noindex, nofollow` para no competir en buscadores
-  con el dominio principal.
+Hostinger publica be-exen.com solo, con cada push, cuando GitHub está conectado
+en hPanel (Sitios web → Administrar → Avanzado → Git). Con la conexión hecha, se
+activa una vez con la operación `hosting_deploy` del conector de Hostinger:
+`type: static`, rama `sitio-estatico`.
+
+El Git clásico de hPanel (clonar un repositorio público en una carpeta) no sirve
+para la raíz de be-exen.com. Solo clona en carpetas vacías, y Hostinger conserva
+el `.htaccess` al vaciar `public_html`.
+
+## Publicar a mano
+
+Mientras GitHub no esté conectado, se publica con el conector de Hostinger:
+
+1. Comprimir en un `.zip` el contenido de la rama `sitio-estatico`, sin `.git`.
+   Subirlo a una rama temporal del repositorio.
+2. Clonar esa rama con `hosting_git_deploy-website-repository` en una carpeta
+   que no exista de `public_html`, por ejemplo `paquete`.
+3. Ejecutar `hosting_websites_deploy-static-site-archive` con la ruta del `.zip`.
+   Reemplaza todo `public_html` por el sitio en unos segundos, y el `.htaccess`
+   del paquete sustituye al anterior.
+4. Borrar la rama temporal y limpiar la caché con `hosting_cache_clear`.
 
 ## Producción: be-exen.com
 
-`be-exen.com` es el dominio principal de la cuenta. Su carpeta `public_html`
-también contiene `plataforma/`, la carpeta de `plataforma.be-exen.com`, y los
-archivos de WordPress. Por eso no se publica como aplicación Node.js: eso
-reemplazaría todo el contenido de la carpeta. Se publica la versión estática
-encima, sin borrar nada:
+- `public_html` contiene solo el sitio.
+- `out/.htaccess`, generado por `scripts/write-htaccess.mjs`:
+  - sirve la página 404 del sitio;
+  - mantiene las reglas de caché;
+  - redirige `www.be-exen.com` a `be-exen.com`;
+  - redirige las URLs del sitio anterior (`deploy/legacy-redirects.json`);
+  - bloquea cualquier `.php` y la carpeta `.git`, porque el sitio no tiene
+    código de servidor.
+- `out/_next/static/.htaccess`: caché larga para los archivos con hash.
 
-1. `npm run build:static` genera `out/` con el sitio y dos `.htaccess`:
-   - `out/.htaccess`: redirige las URLs del sitio anterior, sirve la página
-     404, bloquea el panel y los scripts PHP de WordPress y mantiene las reglas
-     de caché que había. Solo actúa sobre `be-exen.com`: los subdominios y
-     `/plataforma/` siguen igual.
-   - `out/_next/static/.htaccess`: caché larga para los archivos con hash.
-2. Subir el contenido de `out/` a `public_html`, sobrescribiendo solo esos
-   archivos. El `.htaccess` va al final: hasta ese momento sigue respondiendo
-   WordPress.
-3. Limpiar la caché del servidor y del CDN de Hostinger.
-4. Comprobar: el inicio, `/aviso-de-privacidad/`, una URL vieja
-   (`/residencial/` → `/#soluciones`), `/wp-login.php` (403) y
-   `plataforma.be-exen.com`.
+### Comprobaciones
 
-Las reglas se probaron en un Apache 2.4 local con la misma estructura de
-carpetas (LiteSpeed, el servidor de Hostinger, es compatible con ellas).
+- `https://be-exen.com/` y `/aviso-de-privacidad/` muestran el sitio.
+- `/aviso-de-privacidad` añade la barra final.
+- `/residencial/` redirige a `/#soluciones`.
+- `/no-existe` muestra la página 404 del sitio.
+- `/wp-login.php` responde 403.
 
-## Volver a WordPress
+Las reglas se probaron en un Apache 2.4 local y en el servidor de Hostinger
+(LiteSpeed con su CDN).
 
-Los archivos y la base de datos de WordPress no se borran. Para volver basta con
-restaurar su `.htaccess`:
+## Staging: staging.be-exen.com
 
-1. Subir `deploy/wordpress.htaccess` como `public_html/.htaccess`. Es la copia
-   exacta del que tenía el sitio el 17 de noviembre de 2026.
-2. Limpiar la caché de Hostinger.
+Hostinger compila staging en su propio servidor, que tiene una versión de glibc
+anterior a la 2.29:
 
-Con ese `.htaccess`, el servidor vuelve a dar prioridad a `index.php` y los
-archivos del sitio nuevo quedan sin uso.
+- Next.js 16.3 y posteriores ya no compilan ahí: su compilador pide glibc 2.30.
+- La serie 16.2 sí compila, pero tiene vulnerabilidades críticas sin corregir,
+  incluida la 16.2.12.
+
+Por eso staging sigue con la compilación de septiembre de 2026 (Next.js 16.2.6).
+La compilación del 18 de noviembre con `main` falló por esa razón. Producción no
+tiene el problema: se compila en GitHub Actions.
+
+Responde con `X-Robots-Tag: noindex, nofollow` para no competir en buscadores
+con el dominio principal.
+
+## Sitios retirados (18 de noviembre de 2026)
+
+Se retiraron WordPress y la plataforma (`plataforma.be-exen.com`). Antes, BE
+ExEn descargó una copia de seguridad de Hostinger con los archivos y las bases
+de datos. El código de la plataforma está en `github.com/JosueRecoba/BE_ExEn`.
+
+Se borró:
+
+- el subdominio `plataforma.be-exen.com`;
+- todo lo que había en `public_html`: WordPress, la plataforma, `demo/`,
+  `bedigital/` y un respaldo de WordPress de 2023;
+- la base de datos `u322888101_Rf5pe`, que compartían WordPress y la plataforma.
+
+Se conservó `u322888101_beexenty_inv`. No es de ninguno de los dos: acepta
+conexiones remotas, así que la usa otra aplicación.
+
+Queda pendiente borrar en hPanel (be-exen.com → Avanzado → Git) estos
+repositorios:
+
+- `JosueRecoba/BE_ExEn`, que apuntaba a `public_html/plataforma`. Un push a ese
+  repositorio volvería a clonar la plataforma en `public_html`, aunque sus `.php`
+  no se ejecutarían.
+- Las entradas `sitio` y `paquete`, que quedaron de la migración.
