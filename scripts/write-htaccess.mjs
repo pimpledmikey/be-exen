@@ -53,6 +53,10 @@ ExpiresByType text/html "access plus 0 seconds"
 RewriteEngine On
 RewriteBase /
 
+# Una sola dirección: www.be-exen.com redirige a be-exen.com.
+RewriteCond %{HTTP_HOST} ^www\\.be-exen\\.com$ [NC]
+RewriteRule ^(.*)$ https://be-exen.com/$1 [R=301,L]
+
 # El sitio no tiene código de servidor: ningún archivo .php se ejecuta (ni
 # restos de WordPress o de la plataforma retirada) y los datos de Git no se
 # sirven.

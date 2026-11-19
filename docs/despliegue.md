@@ -1,44 +1,49 @@
 # Despliegue en Hostinger
 
-El sitio se publica de dos formas a partir del mismo código, las dos con el Git
-de Hostinger. Ambos sitios están en la cuenta de hosting `u322888101` (plan
-Business).
+El sitio se publica de dos formas a partir del mismo código. Ambos sitios están
+en la cuenta de hosting `u322888101` (plan Business).
 
-| Sitio | Tipo | Cómo se publica |
+| Sitio | Tipo | Qué se publica |
 | --- | --- | --- |
-| `staging.be-exen.com` | Aplicación Node.js (Next.js) | Hostinger compila `main` con `npm run build` en cada push |
-| `be-exen.com` | Archivos estáticos | GitHub Actions compila `npm run build:static` y guarda `out/` en la rama `sitio-estatico`; Hostinger publica esa rama en `public_html` en cada push |
+| `staging.be-exen.com` | Aplicación Node.js (Next.js) | La rama `main`, compilada por Hostinger con `npm run build`; hoy no se puede actualizar (ver más abajo) |
+| `be-exen.com` | Archivos estáticos | La rama `sitio-estatico`: el `out/` de `npm run build:static`, que GitHub Actions actualiza con cada push a `main` |
 
-Los dos usan la conexión con GitHub de hPanel (Sitios web → el sitio →
-Desplegar desde Git, o Avanzado → Git).
+## Publicación automática con Git
 
-## Staging: staging.be-exen.com
+Hostinger publica be-exen.com solo, con cada push, cuando GitHub está conectado
+en hPanel (Sitios web → Administrar → Avanzado → Git). Con la conexión hecha, se
+activa una vez con la operación `hosting_deploy` del conector de Hostinger:
+`type: static`, rama `sitio-estatico`.
 
-- Configuración de compilación: Node.js 22, Next.js, salida `.next`, script
-  `build`, npm.
-- Responde con `X-Robots-Tag: noindex, nofollow` para no competir en buscadores
-  con el dominio principal.
+El Git clásico de hPanel (clonar un repositorio público en una carpeta) no sirve
+para la raíz de be-exen.com. Solo clona en carpetas vacías, y Hostinger conserva
+el `.htaccess` al vaciar `public_html`.
+
+## Publicar a mano
+
+Mientras GitHub no esté conectado, se publica con el conector de Hostinger:
+
+1. Comprimir en un `.zip` el contenido de la rama `sitio-estatico`, sin `.git`.
+   Subirlo a una rama temporal del repositorio.
+2. Clonar esa rama con `hosting_git_deploy-website-repository` en una carpeta
+   que no exista de `public_html`, por ejemplo `paquete`.
+3. Ejecutar `hosting_websites_deploy-static-site-archive` con la ruta del `.zip`.
+   Reemplaza todo `public_html` por el sitio en unos segundos, y el `.htaccess`
+   del paquete sustituye al anterior.
+4. Borrar la rama temporal y limpiar la caché con `hosting_cache_clear`.
+
 
 ## Producción: be-exen.com
 
-- `public_html` contiene solo el sitio: lo que hay en la rama `sitio-estatico`.
-  Hostinger reemplaza su contenido en cada despliegue.
+- `public_html` contiene solo el sitio.
 - `out/.htaccess`, generado por `scripts/write-htaccess.mjs`:
   - sirve la página 404 del sitio;
   - mantiene las reglas de caché;
+  - redirige `www.be-exen.com` a `be-exen.com`;
   - redirige las URLs del sitio anterior (`deploy/legacy-redirects.json`);
   - bloquea cualquier `.php` y la carpeta `.git`, porque el sitio no tiene
     código de servidor.
 - `out/_next/static/.htaccess`: caché larga para los archivos con hash.
-
-### Publicar una versión nueva
-
-1. Fusionar los cambios en `main`.
-2. La acción **Publicar be-exen.com** de GitHub Actions compila el sitio y
-   actualiza la rama `sitio-estatico`. También se puede lanzar a mano desde la
-   pestaña Actions.
-3. Hostinger publica la rama sola en `public_html`. Si un cambio no se ve,
-   limpiar la caché de Hostinger.
 
 ### Comprobaciones
 
@@ -48,22 +53,45 @@ Desplegar desde Git, o Avanzado → Git).
 - `/no-existe` muestra la página 404 del sitio.
 - `/wp-login.php` responde 403.
 
-Las reglas se probaron en un Apache 2.4 local (LiteSpeed, el servidor de
-Hostinger, es compatible con ellas).
+Las reglas se probaron en un Apache 2.4 local y en el servidor de Hostinger
+(LiteSpeed con su CDN).
 
-## Sitios retirados (noviembre de 2026)
+## Staging: staging.be-exen.com
 
-Antes de retirarlos se descargó una copia de seguridad de Hostinger con los
-archivos y las bases de datos.
+Hostinger compila staging en su propio servidor, que tiene una versión de glibc
+anterior a la 2.29:
 
-- **WordPress**, el sitio anterior de be-exen.com.
-- **La plataforma** (`plataforma.be-exen.com`). Su código está en
-  `github.com/JosueRecoba/BE_ExEn`. Ocupaba `public_html/plataforma` y
-  compartía con WordPress la base de datos `u322888101_Rf5pe`.
-  - Se borraron el subdominio y esa base de datos.
-  - Queda pendiente borrar su repositorio en hPanel → be-exen.com → Avanzado →
-    Git, para que un push a su repositorio no vuelva a clonarla en
-    `public_html`. Aun así, sus `.php` no se ejecutarían.
+- Next.js 16.3 y posteriores ya no compilan ahí: su compilador pide glibc 2.30.
+- La serie 16.2 sí compila, pero tiene vulnerabilidades críticas sin corregir,
+  incluida la 16.2.12.
 
-La base de datos `u322888101_beexenty_inv` no es de ninguno de los dos.
-Acepta conexiones remotas, así que la usa otra aplicación, y se conserva.
+Por eso staging sigue con la compilación de septiembre de 2026 (Next.js 16.2.6).
+La compilación del 18 de noviembre con `main` falló por esa razón. Producción no
+tiene el problema: se compila en GitHub Actions.
+
+Responde con `X-Robots-Tag: noindex, nofollow` para no competir en buscadores
+con el dominio principal.
+
+## Sitios retirados (18 de noviembre de 2026)
+
+Se retiraron WordPress y la plataforma (`plataforma.be-exen.com`). Antes, BE
+ExEn descargó una copia de seguridad de Hostinger con los archivos y las bases
+de datos. El código de la plataforma está en `github.com/JosueRecoba/BE_ExEn`.
+
+Se borró:
+
+- el subdominio `plataforma.be-exen.com`;
+- todo lo que había en `public_html`: WordPress, la plataforma, `demo/`,
+  `bedigital/` y un respaldo de WordPress de 2023;
+- la base de datos `u322888101_Rf5pe`, que compartían WordPress y la plataforma.
+
+Se conservó `u322888101_beexenty_inv`. No es de ninguno de los dos: acepta
+conexiones remotas, así que la usa otra aplicación.
+
+Queda pendiente borrar en hPanel (be-exen.com → Avanzado → Git) estos
+repositorios:
+
+- `JosueRecoba/BE_ExEn`, que apuntaba a `public_html/plataforma`. Un push a ese
+  repositorio volvería a clonar la plataforma en `public_html`, aunque sus `.php`
+  no se ejecutarían.
+- Las entradas `sitio` y `paquete`, que quedaron de la migración.

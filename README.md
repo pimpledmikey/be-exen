@@ -25,7 +25,8 @@ Abre [http://localhost:3000](http://localhost:3000).
   `npm run build`.
 - `be-exen.com`: versión estática. Con cada cambio en `main`, GitHub Actions
   compila `npm run build:static` y guarda `out/` en la rama `sitio-estatico`,
-  que Hostinger publica con Git en `public_html`.
+  que Hostinger publica en `public_html`. Es automático cuando GitHub está
+  conectado en hPanel.
 
 Pasos y comprobaciones: `docs/despliegue.md`.
 
