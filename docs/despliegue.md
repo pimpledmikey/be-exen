@@ -32,7 +32,6 @@ Mientras GitHub no esté conectado, se publica con el conector de Hostinger:
    del paquete sustituye al anterior.
 4. Borrar la rama temporal y limpiar la caché con `hosting_cache_clear`.
 
-
 ## Producción: be-exen.com
 
 - `public_html` contiene solo el sitio.
